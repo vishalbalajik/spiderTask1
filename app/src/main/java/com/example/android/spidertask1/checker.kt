@@ -22,10 +22,10 @@ class Checker : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityCheckerBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
         val vibrator = getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
         binding.backToCalculator.setOnClickListener {
-            intent= Intent(this, MainActivity::class.java)
-            startActivity(intent)
+             finish()
 
         }
         binding.SpiFactor.setOnClickListener {
@@ -39,27 +39,38 @@ class Checker : AppCompatActivity() {
                 } else {
                     vibrator.vibrate(80) // Vibrate method for below API Level 26
                 }
+
             val velocit=binding.checkerVelocity.text.toString()
-            val velocity = velocit.toDouble()
-            if(velocity<=0||velocity>=300000000){
-                Toast.makeText(this,"Invalid velocity value", Toast.LENGTH_SHORT).show()
-                intent= Intent(this,Checker::class.java)
-                startActivity(intent)
-            }
-            val c: Long = 300000000
-            val gamma :Double= 1 / (sqrt(1 - ((velocity * velocity) / (c * c))))
-            val gamma2=format("%.6f",gamma)
-            val x=binding.inputLorentz.text.toString()
-            val xx=x.toDouble()
-            val xxx=format("%.6f",xx)
-            if(gamma2==xxx&&velocity>0&&velocity<300000000){
-                binding.tickCross.visibility=View.VISIBLE
-                binding.tickCross.setImageResource(R.drawable.tick)
-            }
-            else{
-                binding.tickCross.visibility=View.VISIBLE
-                binding.tickCross.setImageResource(R.drawable.cross)
-            }
+            val velocity = velocit.toDoubleOrNull()
+                // null and inappropriate velocity check
+                if(velocity==null){
+                    Toast.makeText(this,"Invalid velocity value", Toast.LENGTH_SHORT).show()
+                    binding.checkerVelocity.text=null
+                    binding.inputLorentz.text=null
+                    binding.tickCross.visibility= View.INVISIBLE
+                }
+                else if(velocity<=0||velocity>=300000000){
+                        Toast.makeText(this,"Invalid velocity value", Toast.LENGTH_SHORT).show()
+                        binding.checkerVelocity.text=null
+                        binding.inputLorentz.text=null
+                        binding.tickCross.visibility= View.INVISIBLE
+                    }
+                else{
+                        val c: Long = 300000000
+                        val gamma :Double= 1 / (sqrt(1 - ((velocity?.times(velocity))?.div((c * c))!!)))
+                        val gamma2=format("%.6f",gamma)
+                        val x=binding.inputLorentz.text.toString()
+                        val xx=x.toDouble()
+                        val xxx=format("%.6f",xx)
+                        if(gamma2==xxx&&(velocity>0&&velocity<300000000)) {
+                            binding.tickCross.visibility = View.VISIBLE
+                            binding.tickCross.setImageResource(R.drawable.tick)
+                        }
+                         else {
+                            binding.tickCross.visibility = View.VISIBLE
+                            binding.tickCross.setImageResource(R.drawable.cross)
+                        }
+                }
         }
         }
         binding.reset2.setOnClickListener {

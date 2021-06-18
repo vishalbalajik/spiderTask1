@@ -23,7 +23,7 @@ class Spi : AppCompatActivity() {
         //currentTime2.format12Hour = "hh:mm:ss a"
         //binding.timeDisplay.text = "Time: " + currentTime2.text
         binding.button.setOnClickListener {
-            intent= Intent(this,MainActivity::class.java)
+            intent= Intent(this, MainActivity::class.java)
             startActivity(intent)
 
         }
